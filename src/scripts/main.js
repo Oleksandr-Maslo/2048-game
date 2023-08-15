@@ -33,23 +33,29 @@ const directions = {
 
 window.onload = () => (setField());
 
+function iterateCells(callback) {
+  for (let row = 0; row < rows; row++) {
+    for (let cell = 0; cell < columns; cell++) {
+     callback(row, cell);
+    }
+  }
+}
+
 function setField() {
   isMoved = false;
   gameOver = false;
 
-  for (let row = 0; row < rows; row++) {
-    for (let cell = 0; cell < columns; cell++) {
-      const field = document.createElement('div');
+  iterateCells((row, cell) => {
+    const field = document.createElement('div');
 
-      field.id = row.toString() + '-' + cell.toString();
+    field.id = row.toString() + '-' + cell.toString();
 
-      const num = board[row][cell];
+    const num = board[row][cell];
 
-      update(field, num);
+    update(field, num);
 
-      document.getElementById('board').append(field);
-    }
-  }
+    document.getElementById('board').append(field);
+  })
 };
 
 function startGame() {
@@ -65,15 +71,13 @@ function startGame() {
   score = 0;
   document.querySelector('.game-score').innerText = score;
 
-  for (let row = 0; row < rows; row++) {
-    for (let cell = 0; cell < columns; cell++) {
-      const field
+  iterateCells((row, cell) => {
+    const field
         = document.getElementById(row.toString() + '-' + cell.toString());
 
       field.id = row.toString() + '-' + cell.toString();
       update(field, 0);
-    }
-  }
+  })
 
   startMessage.classList.add('hidden');
   winMessage.classList.add('hidden');
@@ -331,19 +335,21 @@ restartButton.addEventListener('click', () => {
 });
 
 document.addEventListener('keyup', (e) => {
-  if (e.code === directions.Left) {
-    slideLeft();
-  }
+  switch (e.code) {
+    case directions.Left:
+      slideLeft();
+      break;
 
-  if (e.code === directions.Right) {
-    slideRight();
-  }
+    case directions.Right:
+      slideRight();
+      break;
 
-  if (e.code === directions.Up) {
-    slideUp();
-  }
+    case directions.Up:
+      slideUp();
+      break;
 
-  if (e.code === directions.Down) {
-    slideDown();
+    case directions.Down:
+      slideDown();
+      break;
   }
 });
